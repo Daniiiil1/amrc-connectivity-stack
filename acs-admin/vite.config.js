@@ -3,6 +3,7 @@
  */
 
 import { fileURLToPath, URL } from 'node:url'
+import * as nodeFs from 'node:fs'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -47,7 +48,18 @@ export default defineConfig({
       example: '.env.example',
       files: ['dist/index.html'], // explicitly define the correct path
     }),
-    vue(),
+    vue({
+      script: {
+        fs: {
+          fileExists(file) {
+            return nodeFs.existsSync(file)
+          },
+          readFile(file) {
+            return nodeFs.readFileSync(file, 'utf-8')
+          },
+        },
+      },
+    }),
     VueDevTools(),
     inject({
       Buffer: ['buffer', 'Buffer'],
